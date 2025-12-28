@@ -1,6 +1,4 @@
-import Resource from "../model/Resource.model.js";
 import Booking from "../model/Booking.model.js";
-
 
 
 
@@ -10,7 +8,7 @@ export const createBooking = async (req, res) =>{
         const user = req.user.id;
 
         // check overlapping bookings
-        const conflict = await Booking.findOne({
+        const conflict = await Booking.find({
             resource,
             status: "Booked",
             $or: [
@@ -28,7 +26,7 @@ export const createBooking = async (req, res) =>{
 
 
 
-        const booking = await booking.create({
+        const booking = await Booking.create({
             user,
             resource,
             startTime,
@@ -46,10 +44,14 @@ export const createBooking = async (req, res) =>{
 
 export const cancelBooking = async (req, res) =>{
     try {
-        const booking = await Booking.findOne(req.params.id);
+        const booking = await Booking.findById(req.params.id);
 
         if (!booking){
             return res.status(404).json({message: "Booking not found"});
+        }
+
+        if (booking.user.toString() !== req.user.id){
+            return res.status(403).json({message: "Not authorized"});
         }
 
         booking.status = "cancelled";

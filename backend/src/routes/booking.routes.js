@@ -1,5 +1,6 @@
 import express from 'express'
-import { cancelBooking, createBooking, getUserBooking } from '../controllers/booking.controller';
+import { cancelBooking, createBooking, getUserBooking } from '../controllers/booking.controller.js';
+import protect from '../middlewares/auth.middleware.js'
 
 
 const route = express.Router();
@@ -9,14 +10,14 @@ const route = express.Router();
  * @desc Book a resource
  */
 
-route.post("/booking", createBooking);
+route.post("/booking", protect, createBooking);
 
 
 /**
  * @route PUT /api/booking/:id/cancel
  * @desc cancel booking
  */
-route.put("/:id/cancel", cancelBooking);
+route.put("/:id/cancel", protect, cancelBooking);
 
 
 /**
@@ -24,6 +25,6 @@ route.put("/:id/cancel", cancelBooking);
  * @desc Get booking of user
  */
 
-route.get("/:id/bookings", getUserBooking)
+route.get("/:id/bookings", protect, getUserBooking)
 
 export default route

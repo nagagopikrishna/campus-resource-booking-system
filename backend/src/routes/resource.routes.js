@@ -1,5 +1,7 @@
 import express from 'express'
-import { createResource, getAllResource, getResourceById } from '../controllers/resource.controller.js';
+import { createResource, deleteResource, getAllResource, getResourceById, updateResource } from '../controllers/resource.controller.js';
+import protect from '../middlewares/auth.middleware.js';
+import adminOnly from '../middlewares/admin.middleware.js';
 
 const router = express.Router();
 
@@ -8,7 +10,23 @@ const router = express.Router();
  * @route POST /api/resource
  * @desc Create a new resource (Admin)
  */
-router.post("/", createResource);
+router.post("/", protect, adminOnly, createResource);
+
+
+/**
+ * @route PUT /api/resource/:id
+ * @desc Update a resource (Admin)
+ */
+
+
+router.put("/:id", protect, adminOnly, updateResource);
+
+
+/**
+ * @route DELETE /api/resource/:id
+ * @desc Delete a resource (Admin)
+ */
+router.delete("/:id", protect, adminOnly, deleteResource);
 
 
 /**
@@ -16,7 +34,7 @@ router.post("/", createResource);
  * @desc Get all resources
  */
 
-router.get("/", getAllResource);
+router.get("/", protect, getAllResource);
 
 
 /**
@@ -24,7 +42,8 @@ router.get("/", getAllResource);
  * @desc Get single resource
  */
 
-router.get("/:id", getResourceById);
+router.get("/:id", protect, getResourceById);
+
 
 
 export default router;
