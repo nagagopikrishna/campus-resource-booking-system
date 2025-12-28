@@ -10,7 +10,7 @@ export const createBooking = async (req, res) =>{
         // check overlapping bookings
         const conflict = await Booking.find({
             resource,
-            status: "Booked",
+            status: "booked",
             $or: [
                 {
                     startTime: {$lt: endTime},
