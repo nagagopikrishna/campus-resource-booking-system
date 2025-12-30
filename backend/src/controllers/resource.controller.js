@@ -3,7 +3,7 @@ import Resource from '../model/Resource.model.js'
 
 /**
  * @desc Create a new Resource (Admin)
- * @route POST / api/resource
+ * @route POST / api/resources
  */
 
 
@@ -35,7 +35,7 @@ export const getAllResource = async (req, res) =>{
 
 /**
  * @desc Get single resource by ID
- * @route GET /api/resource/:id
+ * @route GET /api/resources/:id
  */
 
 
@@ -57,7 +57,7 @@ export const getResourceById = async (req, res) =>{
 /**
  * 
  * @desc PUT update resource 
- * @route PUT /api/resource/:id
+ * @route PUT /api/resources/:id
  */
 
 
@@ -84,7 +84,7 @@ export const updateResource = async (req, res) =>{
 
 /**
  * @desc DELETE delete resource by id
- * @route DELETE /api/resource/:id
+ * @route DELETE /api/resources/:id
  */
 
 
@@ -104,5 +104,79 @@ export const deleteResource = async (req, res) =>{
             message: "Failed to delete resource",
             error: error.message
         })
+    }
+};
+
+
+/**
+ * @desc GET search resource by name or type
+ * @route GET /api/resources/search?query= 
+ */
+
+
+export const searchResource = async (req, res) =>{
+    try {
+        const {query} = req.query;
+
+        if (!query){
+            return res.status(400).json({message: "Search query is required"});
+        }
+
+        const resource = await Resource.find({
+            $or: [
+                {name: {$regex: query, $options: "i"} },
+                {type: {$regex: query, $options: "i"} }
+            ]
+        });
+
+        res.status(200).json(resource);
+
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+};
+
+
+/**
+ * @desc Filter Resource by type (lab, classrooms, sports) or status(available, booked)
+ * @route GET /api/resources/filter?type=?&status=?
+ */
+
+export const filterResource = async (req, res) =>{
+    try {
+        const {type, status} = req.query;
+        const filter = {};
+        if (filter) filter.type = type;
+        if (status) filter.status = status;
+
+        const resource = await Resource.find(filter);
+
+        res.status(200).json(resource);
+
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+};
+
+
+/**
+ * @desc GET resource sort by date, name, type
+ * @route GET /api/resources/sort?by=?
+ */
+
+export const sortResource = async (req, res) =>{
+    try {
+        const {by} = req.query;
+        let sortOption = {};
+
+        if (by === "date") sortOption.createAt = -1;
+        if (by === "name") sortOption.name = 1;
+        if (by === "type") sortOption.type = 1;
+
+        const resource = await Resource.find().sort(sortOption);
+        res.status(200).json(resource);
+
+    } catch (error) {
+        res.status(500).json({message: error.message});
     }
 };

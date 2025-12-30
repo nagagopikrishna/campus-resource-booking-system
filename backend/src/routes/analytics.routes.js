@@ -4,7 +4,7 @@ import { getTopRooms, getUsageAalytics } from '../controllers/analytics.controll
 
 
 
-const router = express.json();
+const router = express.Router();
 
 /**
  * GET /api/analytics/usage
@@ -19,4 +19,4 @@ router.get("/usage", protect, getUsageAalytics);
 router.get("/top-rooms", protect, getTopRooms);
 
 
-export default routers
+export default router

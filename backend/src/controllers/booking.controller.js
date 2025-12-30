@@ -5,7 +5,7 @@ import Booking from "../model/Booking.model.js";
 export const createBooking = async (req, res) =>{
     try {
         const {resource, startTime, endTime} = req.body;
-        const user = req.user.id;
+        const user = req.User.id;
 
         // check overlapping bookings
         const conflict = await Booking.find({
@@ -50,7 +50,7 @@ export const cancelBooking = async (req, res) =>{
             return res.status(404).json({message: "Booking not found"});
         }
 
-        if (booking.user.toString() !== req.user.id){
+        if (booking.User.toString() !== req.User.id){
             return res.status(403).json({message: "Not authorized"});
         }
 
@@ -68,7 +68,7 @@ export const cancelBooking = async (req, res) =>{
 export const getUserBooking = async (req, res) =>{
     try {
 
-        const booking = await Booking.findOne({user: req.params.id}).populate("resource").sort({startTime: -1});
+        const booking = await Booking.findOne({User: req.params.id}).populate("resource").sort({startTime: -1});
         res.status(200).json(booking);
 
     } catch (error) {

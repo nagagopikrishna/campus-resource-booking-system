@@ -1,5 +1,6 @@
 const adminOnly = (req, res, next) =>{
-    if (req.user && req.user.role === "admin"){
+
+    if (req.User && req.User.role === "admin"){
         next();
     }
 
